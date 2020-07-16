@@ -1,0 +1,143 @@
+# ARGENTINA ---------------------------------------------
+rm(list = ls())
+library(httr)
+
+list <- c("http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat202007.pdf", 
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat202006.pdf", 
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat202005.pdf",
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat202004.pdf",
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat202003.pdf",
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat202002.pdf",
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat202001.pdf",
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201912.pdf",
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201911.pdf",
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201910.pdf",
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201909.pdf",
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201908.pdf",
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201907.pdf",
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201906.pdf",
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201905.pdf",
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201904.pdf",
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201903.pdf",
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201902.pdf",
+          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201901.pdf")
+
+for (i in 1:length(list)) {
+  download.file(list[i], destfile = paste0("Argentina-", i, ".pdf"),  mode="wb")
+}
+
+# BOLIVIA ---------------------------------------------
+rm(list = ls())
+library(httr)
+
+list <- c("https://www.asoban.bo/system/publications/pdfs/000/000/170/original/Rep_Cart_may-20.pdf", 
+          "https://www.asoban.bo/system/publications/pdfs/000/000/168/original/Rep_Cart_abr-20.pdf", 
+          "https://www.asoban.bo/system/publications/pdfs/000/000/168/original/Rep_Cart_mar-20.pdf",
+          "https://www.asoban.bo/system/publications/pdfs/000/000/168/original/Rep_Cart_feb-20.pdf",
+          "https://www.asoban.bo/system/publications/pdfs/000/000/168/original/Rep_Cart_ene-20.pdf",
+          "https://www.asoban.bo/system/publications/pdfs/000/000/168/original/Rep_Cart_dic-19.pdf",
+          "https://www.asoban.bo/system/publications/pdfs/000/000/168/original/Rep_Cart_nov-19.pdf",
+          "https://www.asoban.bo/system/publications/pdfs/000/000/168/original/Rep_Cart_oct-19.pdf",
+          "https://www.asoban.bo/system/publications/pdfs/000/000/168/original/Rep_Cart_sep-19.pdf",
+          "https://www.asoban.bo/system/publications/pdfs/000/000/168/original/Rep_Cart_ago-19.pdf",
+          "https://www.asoban.bo/system/publications/pdfs/000/000/168/original/Rep_Cart_jul-19.pdf",
+          "https://www.asoban.bo/system/publications/pdfs/000/000/168/original/Rep_Cart_jun-19.pdf",
+          "https://www.asoban.bo/system/publications/pdfs/000/000/168/original/Rep_Cart_may-19.pdf",
+          "https://www.asoban.bo/system/publications/pdfs/000/000/168/original/Rep_Cart_abr-19.pdf",
+          "https://www.asoban.bo/system/publications/pdfs/000/000/168/original/Rep_Cart_mar-19.pdf",
+          "https://www.asoban.bo/system/publications/pdfs/000/000/168/original/Rep_Cart_feb-19.pdf",
+          "https://www.asoban.bo/system/publications/pdfs/000/000/168/original/Rep_Cart_ene-19.pdf")
+
+for (i in 1:length(list)) {
+  download.file(list[i], destfile = paste0("Bolivia-", i, ".pdf"),  mode="wb")
+}
+
+#Note: Falta descargar un link de creditos por division politica
+
+# BRASIL ---------------------------------------------
+rm(list = ls())
+library(httr)
+
+list <- c("https://www.bcb.gov.br/ftp/notaecon/ni202006pmp.zip", 
+          "https://www.bcb.gov.br/ftp/notaecon/ni202005pmp.zip", 
+          "https://www.bcb.gov.br/ftp/notaecon/ni202004pmp.zip",
+          "https://www.bcb.gov.br/ftp/notaecon/ni202003pmp.zip",
+          "https://www.bcb.gov.br/ftp/notaecon/ni202002pmp.zip",
+          "https://www.bcb.gov.br/ftp/notaecon/ni202001pmp.zip",
+          "https://www.bcb.gov.br/ftp/notaecon/ni201912pmp.zip",
+          "https://www.bcb.gov.br/ftp/notaecon/ni201911pmp.zip",
+          "https://www.bcb.gov.br/ftp/notaecon/ni201910pmp.zip",
+          "https://www.bcb.gov.br/ftp/notaecon/ni201909pmp.zip",
+          "https://www.bcb.gov.br/ftp/notaecon/ni201908pmp.zip",
+          "https://www.bcb.gov.br/ftp/notaecon/ni201907pmp.zip",
+          "https://www.bcb.gov.br/ftp/notaecon/ni201906pmp.zip",
+          "https://www.bcb.gov.br/ftp/notaecon/ni201905pmp.zip",
+          "https://www.bcb.gov.br/ftp/notaecon/ni201904pmp.zip",
+          "https://www.bcb.gov.br/ftp/notaecon/ni201903pmp.zip",
+          "https://www.bcb.gov.br/ftp/notaecon/ni201902pmp.zip",
+          "https://www.bcb.gov.br/ftp/notaecon/ni201901pmp.zip")
+
+for (i in 1:length(list)) {
+  download.file(list[i], destfile = paste0("Brasil-", i, ".zip"),  mode="wb")
+}
+
+# CHILE ---------------------------------------------
+rm(list = ls())
+library(httr)
+#http://www.cmfchile.cl/portal/estadisticas/606/w3-propertyvalue-29401.html
+
+#La informacion se abre en una nueva ventana
+
+# COLOMBIA ---------------------------------------------
+rm(list = ls())
+library(httr)
+
+list <- c("https://www.superfinanciera.gov.co/descargas?com=institucional&name=pubFile1007220&downloadname=p_indicadores_e.zip")
+
+for (i in 1:length(list)) {
+  download.file(list[i], destfile = paste0("Colombia-", i, ".zip"),  mode="wb")
+}
+
+# COSTA RICA ---------------------------------------------
+rm(list = ls())
+library(httr)
+list <- c("https://gee.bccr.fi.cr/indicadoreseconomicos/Cuadros/frmVerCatCuadro.aspx?idioma=1&CodCuadro=%201317")
+
+for (i in 1:length(list)) {
+  download.file(list[i], destfile = paste0("CostaRica-", i, ".xls"),  mode="wb")
+}
+
+# REPUBLICA DOMINICANA ---------------------------------------------
+rm(list = ls())
+library(httr)
+list <- c("https://www.sib.gob.do/sites/default/files/nuevosdocumentos/estadisticas/seriestiempo/D-Cartera-de-Creditos_0.xlsx")
+
+for (i in 1:length(list)) {
+  download.file(list[i], destfile = paste0("RepDo-", i, ".xls"),  mode="wb")
+}
+
+# ECUADOR ---------------------------------------------
+rm(list = ls())
+library(httr)
+list <- c("http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2020/07/BOL-FIN-BCOS-JUN-20-2.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2020/07/BOL-FIN-BCOS-MAY-20-4.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2020/07/BOL-FIN-BCOS-ABR-20-2.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2020/07/BOL-FIN-BCOS-MAR-20.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2020/07/BOL-FIN-BCOS-FEB-20.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2020/07/BOL-FIN-BCOS-ENE-20.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2019/02/BOL_FIN_BCOS_DIC_19.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2019/02/BOL_FIN_BCOS_NOV_19.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2019/02/BOL_FIN_BCOS_OCT_19.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2019/02/BOL_FIN_BCOS_SEP_19.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2019/02/BOL_FIN_BCOS_AGO_19.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2019/02/BOL_FIN_BCOS_JUL_19.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2019/02/BOL_FIN_BCOS_JUN_19.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2019/02/BOL_FIN_BCOS_MAY_19.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2019/02/BOL_FIN_BCOS_ABR_19.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2019/02/BOL_FIN_BCOS_MAR_19.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2019/02/BOL_FIN_BCOS_FEB_19.zip",
+          "http://estadisticas.superbancos.gob.ec/portalestadistico/portalestudios/wp-content/uploads/sites/4/downloads/2019/02/BOL_FIN_BCOS_ENE_19.zip")
+
+for (i in 1:length(list)) {
+  download.file(list[i], destfile = paste0("Ecuador-", i, ".zip"),  mode="wb")
+}
