@@ -1,30 +1,162 @@
 # ARGENTINA ---------------------------------------------
+# TIPO DE CREDITO ---------------------------------------
+# Instalando paquetes ---------------------------------------------
+#install.packages("httr")
+#install.packages("readxl")
+#install.packages("tidyverse")
+#install.packages("openxlsx")
+#install.packages("dplyr")
+#install.packages("dplyr")
+#install.packages("ggplot2")
+#install.packages("dplyr")
+#install.packages("hrbrthemes")
+
+# Importando datos ---------------------------------------------
 rm(list = ls())
+
 library(httr)
-
-list <- c("http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat202007.pdf", 
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat202006.pdf", 
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat202005.pdf",
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat202004.pdf",
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat202003.pdf",
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat202002.pdf",
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat202001.pdf",
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201912.pdf",
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201911.pdf",
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201910.pdf",
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201909.pdf",
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201908.pdf",
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201907.pdf",
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201906.pdf",
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201905.pdf",
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201904.pdf",
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201903.pdf",
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201902.pdf",
-          "http://www.bcra.gov.ar/Pdfs/PublicacionesEstadisticas/BoletinEstadistico/boldat201901.pdf")
-
+list <- c("http://www.bcra.gob.ar/Pdfs/PublicacionesEstadisticas/seriese.xls")
 for (i in 1:length(list)) {
-  download.file(list[i], destfile = paste0("Argentina-", i, ".pdf"),  mode="wb")
+  download.file(list[i], destfile = paste0("Argentina", i, ".xls"),  mode="wb")
 }
+
+# reading the file
+rm(list = ls())
+library(readxl)
+tcar <- read_excel("Argentina1.xls" ,sheet="PRESTAMOS", range = "A4142:U4750")
+
+#library(xlsx)
+#read.xlsx("Argentina1.xls", "PRESTAMOS", rowIndex = 4142:4750, colIndex = 1:20)
+
+# Renombrando variables --------------------------------------------
+library(tidyverse) #Cambiando de nombres las variables
+colnames(tcar) # get column names
+
+# Rename column names
+names(tcar)[names(tcar) == "43467"] <- "fecha"
+names(tcar)[names(tcar) == "144582"] <- "adelantos"
+names(tcar)[names(tcar) == "250450"] <- "documentos"
+names(tcar)[names(tcar) == "210857"] <- "inmobiliario"
+names(tcar)[names(tcar) == "94067"] <- "prendarios"
+names(tcar)[names(tcar) == "419192"] <- "credito.personal"
+names(tcar)[names(tcar) == "374998"] <- "tarjeta.credito"
+names(tcar)[names(tcar) == "52199"] <- "otros"
+names(tcar)[names(tcar) == "1546345"] <- "total"
+tcar
+
+#Con las variables que interesan
+keeps <- c("fecha","adelantos", "documentos", "inmobiliario", "prendarios", "credito.personal", "tarjeta.credito", "otros", "total")
+tcargentina = tcar[keeps]
+
+# Variable fecha --------------------------------------------
+tcargentina <- tcargentina[!(tcargentina$fecha=="Prom.Ene.-19" 
+            | tcargentina$fecha=="Prom.Feb.-19"
+            | tcargentina$fecha=="Prom.Mar.-19"
+            | tcargentina$fecha=="Prom.Abr.-19"
+            | tcargentina$fecha=="Prom.May.-19"
+            | tcargentina$fecha=="Prom.Jun.-19"
+            | tcargentina$fecha=="Prom.Jul.-19"
+            | tcargentina$fecha=="Prom.Ago.-19"
+            | tcargentina$fecha=="Prom.Sep.-19"
+            | tcargentina$fecha=="Prom.Oct.-19"
+            | tcargentina$fecha=="Prom.Nov.-19"
+            | tcargentina$fecha=="Prom.Dic.-19"
+            | tcargentina$fecha=="Prom.Ene.-20"
+            | tcargentina$fecha=="Prom.Feb.-20"
+            | tcargentina$fecha=="Prom.Mar.-20"
+            | tcargentina$fecha=="Prom.Abr.-20"
+            | tcargentina$fecha=="Prom.May.-20"
+            | tcargentina$fecha=="Prom.Jun.-20"
+            | tcargentina$fecha=="Prom.Jul.-20"
+            | tcargentina$fecha=="Prom.Ago.-20"
+            | tcargentina$fecha=="Prom.Sep.-20"
+            | tcargentina$fecha=="Prom.Oct.-20"
+            | tcargentina$fecha=="Prom.Nov.-20"
+            | tcargentina$fecha=="Prom.Dic.-20"
+            | tcargentina$fecha=="Prom.Ene.-21"
+            | tcargentina$fecha=="Prom.Feb.-21"
+            | tcargentina$fecha=="Prom.Mar.-21"
+            | tcargentina$fecha=="Prom.Abr.-21"
+            | tcargentina$fecha=="Prom.May.-21"
+            | tcargentina$fecha=="Prom.Jun.-21"),]
+tcargentina
+
+tcargentina %>% filter_all(all_vars(!is.na(.))) #observaciones vacias
+tcargentina <-tcargentina %>% filter(total >= 1000000 ) #solo saldo credito
+
+#Format date
+#install.packages("openxlsx")
+library(openxlsx)
+tcargentina$fecha=openxlsx::convertToDate(tcargentina$fecha)
+
+#Nombre de las filas
+row.names(tcargentina) <- tcargentina$fecha
+
+# Datos mensuales ---------------------------------------
+library(dplyr)
+#Encontrar el ultimo dia segun mes
+#Creando variables year, month and day
+tcargentina$month <- format(tcargentina$fecha, "%m")
+tcargentina$year <- format(tcargentina$fecha, "%Y")
+tcargentina$day <- format(tcargentina$fecha, "%D")
+tcargentina$my <- format(as.Date(tcargentina$fecha,format="%Y-%m-%d"),"%Y-%m")
+
+#Encontrando el valor maximo
+tcargentina$maxvalue <- ave(tcargentina$fecha, tcargentina$my, FUN = max)
+
+#Mantener los valores finales
+library(dplyr)
+tcargentinam <- filter(tcargentina, maxvalue==fecha)
+
+#Nombre de las filas
+row.names(tcargentinam) <- tcargentinam$fecha
+
+keeps4 <- c("fecha",
+            "my",
+            "tarjeta.credito",           
+            "credito.personal",
+            "inmobiliario")
+tcargentinamo = tcargentinam[keeps4]
+
+# Graphs daily dates------------------------------------------------
+#install.packages("ggplot2")
+#install.packages("hrbrthemes")
+library(ggplot2)
+library(dplyr)
+library(hrbrthemes)
+#colnames(tcargentina)
+inmobiliario <- tcargentinamo %>%
+  tail(10000) %>%
+  ggplot(aes(x=fecha, y=inmobiliario)) +
+  geom_line() +
+  geom_point()
+inmobiliario
+
+inmobiliario <- inmobiliario + ggtitle("ARGENTINA crédito inmobiliario") +
+  xlab("Date") + ylab("MM pesos argentinos")
+#
+tarjetacredito <- tcargentinamo %>%
+  tail(10000) %>%
+  ggplot( aes(x=fecha, y=tarjeta.credito)) +
+  geom_line() +
+  geom_point()
+tarjetacredito
+
+tarjetacredito <- tarjetacredito + ggtitle("ARGENTINA tarjeta de crédito") +
+  xlab("Date") + ylab("MM pesos argentinos")
+
+#
+credpersonal <- tcargentinamo %>%
+  tail(10000) %>%
+  ggplot( aes(x=fecha, y=credito.personal)) +
+  geom_line() +
+  geom_point()
+credpersonal
+
+credpersonal <- credpersonal + ggtitle("ARGENTINA crédito personal") +
+  xlab("Date") + ylab("MM pesos argentinos")
+
+save(tcargentina,file="tcargentina.Rda")
 
 # BOLIVIA ---------------------------------------------
 rm(list = ls())
