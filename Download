@@ -187,31 +187,1079 @@ for (i in 1:length(list)) {
 #Note: Falta descargar un link de creditos por division politica
 
 # BRASIL ---------------------------------------------
+# Instalando paquetes ---------------------------------------------
+#install.packages("httr")
+#install.packages("readxl")
+#install.packages("tidyverse")
+#install.packages("openxlsx")
+#install.packages("dplyr")
+#install.packages("dplyr")
+#install.packages("ggplot2")
+#install.packages("dplyr")
+#install.packages("hrbrthemes")
+#install.packages("splitstackshape")
+
+
+# Importando datos ---------------------------------------------
 rm(list = ls())
 library(httr)
 
-list <- c("https://www.bcb.gov.br/ftp/notaecon/ni202006pmp.zip", 
-          "https://www.bcb.gov.br/ftp/notaecon/ni202005pmp.zip", 
+list <- c("https://www.bcb.gov.br/ftp/notaecon/ni202006pmp.zip",
           "https://www.bcb.gov.br/ftp/notaecon/ni202004pmp.zip",
-          "https://www.bcb.gov.br/ftp/notaecon/ni202003pmp.zip",
           "https://www.bcb.gov.br/ftp/notaecon/ni202002pmp.zip",
-          "https://www.bcb.gov.br/ftp/notaecon/ni202001pmp.zip",
           "https://www.bcb.gov.br/ftp/notaecon/ni201912pmp.zip",
-          "https://www.bcb.gov.br/ftp/notaecon/ni201911pmp.zip",
           "https://www.bcb.gov.br/ftp/notaecon/ni201910pmp.zip",
-          "https://www.bcb.gov.br/ftp/notaecon/ni201909pmp.zip",
           "https://www.bcb.gov.br/ftp/notaecon/ni201908pmp.zip",
-          "https://www.bcb.gov.br/ftp/notaecon/ni201907pmp.zip",
           "https://www.bcb.gov.br/ftp/notaecon/ni201906pmp.zip",
-          "https://www.bcb.gov.br/ftp/notaecon/ni201905pmp.zip",
           "https://www.bcb.gov.br/ftp/notaecon/ni201904pmp.zip",
-          "https://www.bcb.gov.br/ftp/notaecon/ni201903pmp.zip",
-          "https://www.bcb.gov.br/ftp/notaecon/ni201902pmp.zip",
-          "https://www.bcb.gov.br/ftp/notaecon/ni201901pmp.zip")
+          "https://www.bcb.gov.br/ftp/notaecon/ni201902pmp.zip")
 
 for (i in 1:length(list)) {
-  download.file(list[i], destfile = paste0("Brasil-", i, ".zip"),  mode="wb")
+  download.file(list[i], destfile = paste0("Brasil", i, ".zip"),  mode="wb")}
+
+# Unzip documents ---------------------------------------
+library(plyr)
+# get all the zip files
+zipF <- "C:/Users/Asus/Documents/IDBinvest/FinancialSystem_Brasil/Brasil1.zip"
+# unzip all your files
+outDir<-"C:/Users/Asus/Documents/IDBinvest/FinancialSystem_Brasil"
+unzip(zipF,exdir=outDir)
+
+#startingDir<-"C:/Users/Asus/Documents/IDBinvest/FinancialSystem_Brasil/Brasil1"
+#filez<-list.files(startingDir,pattern="searchPattern")
+#head(filez)
+
+#Cambiando nombre---------------------------------------
+#file.rename(list.files(pattern="Notimp_*.xlsx"), paste0("Brasil9_", 1:700))
+file.rename(("Notimp2.xlsx"), paste0("Brasil9.xlsx"))
+
+# TIPO CREDITO-PERSONAS JURIDICAS -----------------------
+rm(list = ls())
+# Tabel 5 ---------------------------------------
+library(readxl)
+tcbrat5 <- read_excel("Brasil9.xlsx",sheet="Tabela 5", range = "A12:L45")
+
+# analyzing
+colnames(tcbra)
+# Rename column names
+names(tcbrat5)[names(tcbrat5) == "...1"] <- "year"
+names(tcbrat5)[names(tcbrat5) == "...2"] <- "m"
+names(tcbrat5)[names(tcbrat5) == "...3"] <- "n"
+names(tcbrat5)[names(tcbrat5) == "...4"] <- "PJ.desc.cuentas.cobrar"
+names(tcbrat5)[names(tcbrat5) == "...5"] <- "PJ.desc.cheques"
+names(tcbrat5)[names(tcbrat5) == "...6"] <- "PJ.ant.fac.tarjetas"
+names(tcbrat5)[names(tcbrat5) == "...7"] <- "PJ.cap.trabajo365"
+names(tcbrat5)[names(tcbrat5) == "...8"] <- "PJ.cap.trabajo+365"
+names(tcbrat5)[names(tcbrat5) == "...9"] <- "PJ.techo.girat"
+names(tcbrat5)[names(tcbrat5) == "...10"] <- "PJ.capital.trabajoT"
+names(tcbrat5)[names(tcbrat5) == "...11"] <- "PJ.cta.garantizado"
+names(tcbrat5)[names(tcbrat5) == "...12"] <- "PJ.cheque.especial"
+tcbrat5
+
+#Eliminando empty values
+tcbrat5 <- tcbrat5[!is.na(tcbrat5$techo.girat), ]
+tcbrat5 <- tcbrat5[!is.na(tcbrat5$m), ]
+
+#Con las variables que interesan
+keeps <- c("m","PJ.desc.cuentas.cobrar", 
+           "PJ.desc.cheques", "PJ.ant.fac.tarjetas", "PJ.cap.trabajo365", 
+           "PJ.cap.trabajo+365", "PJ.techo.girat", "PJ.capital.trabajoT",
+           "PJ.cta.garantizado", "PJ.cheque.especial")
+tcbrasilt5 = tcbrat5[keeps]
+
+#Variable mes numeral
+tcbrasilt5$id[tcbrasilt5$m=="Jan"] <- c(1)
+tcbrasilt5$id[tcbrasilt5$m=="Fev"] <- c(2)
+tcbrasilt5$id[tcbrasilt5$m=="Mar"] <- c(3)
+tcbrasilt5$id[tcbrasilt5$m=="Abr"] <- c(4)
+tcbrasilt5$id[tcbrasilt5$m=="Mai"] <- c(5)
+tcbrasilt5$id[tcbrasilt5$m=="Jun"] <- c(6)
+tcbrasilt5$id[tcbrasilt5$m=="Jul"] <- c(7)
+tcbrasilt5$id[tcbrasilt5$m=="Ago"] <- c(8)
+tcbrasilt5$id[tcbrasilt5$m=="Set"] <- c(9)
+tcbrasilt5$id[tcbrasilt5$m=="Out"] <- c(10)
+tcbrasilt5$id[tcbrasilt5$m=="Nov"] <- c(11)
+tcbrasilt5$id[tcbrasilt5$m=="Dez"] <- c(12)
+
+tcbrasilt5$month[tcbrasilt5$m=="Jan"] <- c("Jan")
+tcbrasilt5$month[tcbrasilt5$m=="Fev"] <- c("Feb")
+tcbrasilt5$month[tcbrasilt5$m=="Mar"] <- c("Mar")
+tcbrasilt5$month[tcbrasilt5$m=="Abr"] <- c("Apr")
+tcbrasilt5$month[tcbrasilt5$m=="Mai"] <- c("May")
+tcbrasilt5$month[tcbrasilt5$m=="Jun"] <- c("Jun")
+tcbrasilt5$month[tcbrasilt5$m=="Jul"] <- c("Jul")
+tcbrasilt5$month[tcbrasilt5$m=="Ago"] <- c("Aug")
+tcbrasilt5$month[tcbrasilt5$m=="Set"] <- c("Sep")
+tcbrasilt5$month[tcbrasilt5$m=="Out"] <- c("Oct")
+tcbrasilt5$month[tcbrasilt5$m=="Nov"] <- c("Nov")
+tcbrasilt5$month[tcbrasilt5$m=="Dez"] <- c("Dec")
+
+#Variable año
+tcbrasilt5$id.t <- with(tcbrasilt5, ave(rep(1, nrow(tcbrasilt5)), id, FUN = seq_along))
+
+#Cambiando los valores del id
+tcbrasilt5$year <- NA
+tcbrasilt5$year[tcbrasilt5$id.t==1] <- c(2019)
+tcbrasilt5$year[tcbrasilt5$id.t==2] <- c(2020)
+tcbrasilt5$year[tcbrasilt5$id.t==3] <- c(2021)
+tcbrasilt5$year[tcbrasilt5$id.t==4] <- c(2022)
+tcbrasilt5$year[tcbrasilt5$id.t==5] <- c(2023)
+tcbrasilt5$year[tcbrasilt5$id.t==6] <- c(2024)
+tcbrasilt5$year[tcbrasilt5$id.t==7] <- c(2025)
+tcbrasilt5$year[tcbrasilt5$id.t==8] <- c(2026)
+tcbrasilt5$year[tcbrasilt5$id.t==9] <- c(2027)
+tcbrasilt5$year[tcbrasilt5$id.t==10] <- c(2028)
+tcbrasilt5$year[tcbrasilt5$id.t==11] <- c(2029)
+tcbrasilt5$year[tcbrasilt5$id.t==12] <- c(2030)
+
+#tcbrasilt5$w <- as.factor(tcbrasilt5$id)
+
+#La variable "date"
+#tcbrasilt5$date <- format(lubridate::ymd(paste0(tcbrasilt5$year,tcbrasilt5$month,"01")), "%Y-%m")
+#tcbrasilt5$date <- format(as.Date(paste0(tcbrasilt5$month, tcbrasilt5$year, "01"), format="%b%Y%d"), "%m-%Y")
+tcbrasilt5$date <- lubridate::ymd(paste0(tcbrasilt5$year,tcbrasilt5$month,"01"))
+
+#Nos quedamos con las variables que nos importan
+keeps2 <- c("date","year","month","id.t","id", "PJ.desc.cuentas.cobrar", 
+           "PJ.desc.cheques", "PJ.ant.fac.tarjetas", "PJ.cap.trabajo365", 
+           "PJ.cap.trabajo+365", "PJ.techo.girat", "PJ.capital.trabajoT",
+           "PJ.cta.garantizado", "PJ.cheque.especial")
+tcbrasilt5 = tcbrasilt5[keeps2]
+
+# Tabel 5A ---------------------------------------
+#rm(list = ls())
+library(readxl)
+tcbrat5a <- read_excel("Brasil9.xlsx",sheet="Tabela 5A", range = "A12:O30")
+
+# analyzing
+colnames(tcbrat5a)
+# Rename column names
+names(tcbrat5a)[names(tcbrat5a) == "...1"] <- "year"
+names(tcbrat5a)[names(tcbrat5a) == "...2"] <- "m"
+names(tcbrat5a)[names(tcbrat5a) == "...3"] <- "n"
+names(tcbrat5a)[names(tcbrat5a) == "...4"] <- "PJ.adq.vehiculos"
+names(tcbrat5a)[names(tcbrat5a) == "...5"] <- "PJ.adq.obienes"
+names(tcbrat5a)[names(tcbrat5a) == "...6"] <- "PJ.arrend.vehiculos"
+names(tcbrat5a)[names(tcbrat5a) == "...7"] <- "PJ.arrend.obienes"
+names(tcbrat5a)[names(tcbrat5a) == "...8"] <- "PJ.arrend.total"
+names(tcbrat5a)[names(tcbrat5a) == "...9"] <- "PJ.vendedor"
+names(tcbrat5a)[names(tcbrat5a) == "...10"] <- "PJ.comprador"
+names(tcbrat5a)[names(tcbrat5a) == "...11"] <- "n2"
+names(tcbrat5a)[names(tcbrat5a) == "...12"] <- "n3"
+tcbrat5a
+
+#Eliminando empty values
+#tcbrat5a <- tcbrat5a[!is.na(tcbrat5a$vendedor), ]
+tcbrat5a <- tcbrat5a[!is.na(tcbrat5a$m), ]
+
+#Con las variables que interesan
+colnames(tcbrat5a)
+
+keeps <- c("m","PJ.adq.vehiculos","PJ.adq.obienes",
+           "PJ.arrend.vehiculos","PJ.arrend.obienes","PJ.arrend.total",
+           "PJ.vendedor","PJ.comprador")
+tcbrasilt5a = tcbrat5a[keeps]
+
+#Variable mes numeral
+tcbrasilt5a$id[tcbrasilt5a$m=="Jan"] <- c(1)
+tcbrasilt5a$id[tcbrasilt5a$m=="Fev"] <- c(2)
+tcbrasilt5a$id[tcbrasilt5a$m=="Mar"] <- c(3)
+tcbrasilt5a$id[tcbrasilt5a$m=="Abr"] <- c(4)
+tcbrasilt5a$id[tcbrasilt5a$m=="Mai"] <- c(5)
+tcbrasilt5a$id[tcbrasilt5a$m=="Jun"] <- c(6)
+tcbrasilt5a$id[tcbrasilt5a$m=="Jul"] <- c(7)
+tcbrasilt5a$id[tcbrasilt5a$m=="Ago"] <- c(8)
+tcbrasilt5a$id[tcbrasilt5a$m=="Set"] <- c(9)
+tcbrasilt5a$id[tcbrasilt5a$m=="Out"] <- c(10)
+tcbrasilt5a$id[tcbrasilt5a$m=="Nov"] <- c(11)
+tcbrasilt5a$id[tcbrasilt5a$m=="Dez"] <- c(12)
+
+tcbrasilt5a$month[tcbrasilt5a$m=="Jan"] <- c("Jan")
+tcbrasilt5a$month[tcbrasilt5a$m=="Fev"] <- c("Feb")
+tcbrasilt5a$month[tcbrasilt5a$m=="Mar"] <- c("Mar")
+tcbrasilt5a$month[tcbrasilt5a$m=="Abr"] <- c("Apr")
+tcbrasilt5a$month[tcbrasilt5a$m=="Mai"] <- c("May")
+tcbrasilt5a$month[tcbrasilt5a$m=="Jun"] <- c("Jun")
+tcbrasilt5a$month[tcbrasilt5a$m=="Jul"] <- c("Jul")
+tcbrasilt5a$month[tcbrasilt5a$m=="Ago"] <- c("Aug")
+tcbrasilt5a$month[tcbrasilt5a$m=="Set"] <- c("Sep")
+tcbrasilt5a$month[tcbrasilt5a$m=="Out"] <- c("Oct")
+tcbrasilt5a$month[tcbrasilt5a$m=="Nov"] <- c("Nov")
+tcbrasilt5a$month[tcbrasilt5a$m=="Dez"] <- c("Dec")
+
+#Variable año
+tcbrasilt5a$id.t <- with(tcbrasilt5a, ave(rep(1, nrow(tcbrasilt5a)), id, FUN = seq_along))
+
+#Cambiando los valores del id
+tcbrasilt5a$year <- NA
+tcbrasilt5a$year[tcbrasilt5a$id.t==1] <- c(2019)
+tcbrasilt5a$year[tcbrasilt5a$id.t==2] <- c(2020)
+tcbrasilt5a$year[tcbrasilt5a$id.t==3] <- c(2021)
+tcbrasilt5a$year[tcbrasilt5a$id.t==4] <- c(2022)
+tcbrasilt5a$year[tcbrasilt5a$id.t==5] <- c(2023)
+tcbrasilt5a$year[tcbrasilt5a$id.t==6] <- c(2024)
+tcbrasilt5a$year[tcbrasilt5a$id.t==7] <- c(2025)
+tcbrasilt5a$year[tcbrasilt5a$id.t==8] <- c(2026)
+tcbrasilt5a$year[tcbrasilt5a$id.t==9] <- c(2027)
+tcbrasilt5a$year[tcbrasilt5a$id.t==10] <- c(2028)
+tcbrasilt5a$year[tcbrasilt5a$id.t==11] <- c(2029)
+tcbrasilt5a$year[tcbrasilt5a$id.t==12] <- c(2030)
+
+#tcbrasilt5$w <- as.factor(tcbrasilt5a$id)
+
+#La variable "date"
+tcbrasilt5a$date <- format(lubridate::ymd(paste0(tcbrasilt5a$year,tcbrasilt5a$month,"01")), "%m-%Y")
+colnames(tcbrasilt5a)
+#Nos quedamos con las variables que nos importan
+keeps2 <- c("PJ.adq.vehiculos",
+            "PJ.adq.obienes",      "PJ.arrend.vehiculos",
+            "PJ.arrend.obienes",   "PJ.arrend.total",    "PJ.vendedor",
+            "PJ.comprador")
+tcbrasilt5a = tcbrasilt5a[keeps2]
+
+
+# Tabel 5B ---------------------------------------
+#rm(list = ls())
+library(readxl)
+tcbrat5b <- read_excel("Brasil9.xlsx",sheet="Tabela 5B", range = "A12:O30")
+
+# analyzing
+colnames(tcbrat5b)
+# Rename column names
+names(tcbrat5b)[names(tcbrat5b) == "...1"] <- "year"
+names(tcbrat5b)[names(tcbrat5b) == "...2"] <- "m"
+names(tcbrat5b)[names(tcbrat5b) == "...3"] <- "n"
+names(tcbrat5b)[names(tcbrat5b) == "...4"] <- "PJ.tarjcredito.portpar"
+names(tcbrat5b)[names(tcbrat5b) == "...5"] <- "PJ.tarjcredito.alavista"
+names(tcbrat5b)[names(tcbrat5b) == "...6"] <- "PJ.tarjcredito.total"
+names(tcbrat5b)[names(tcbrat5b) == "...7"] <- "PJ.acc"
+names(tcbrat5b)[names(tcbrat5b) == "...8"] <- "PJ.finan.import"
+names(tcbrat5b)[names(tcbrat5b) == "...9"] <- "PJ.finan.export"
+names(tcbrat5b)[names(tcbrat5b) == "...10"] <- "PJ.trans.exterior"
+names(tcbrat5b)[names(tcbrat5b) == "...11"] <- "PJ.otrost5"
+names(tcbrat5b)[names(tcbrat5b) == "...12"] <- "PJ.totalt5"
+tcbrat5b
+
+#Eliminando empty values
+#tcbrat5b <- tcbrat5b[!is.na(tcbrat5b$vendedor), ]
+tcbrat5b <- tcbrat5b[!is.na(tcbrat5b$m), ]
+
+#Con las variables que interesan
+colnames(tcbrat5b)
+
+keeps <- c("m","PJ.tarjcredito.portpar",
+           "PJ.tarjcredito.alavista", "PJ.tarjcredito.total",
+           "PJ.acc",                  "PJ.finan.import",
+           "PJ.finan.export",         "PJ.trans.exterior",
+           "PJ.otrost5" ,               "PJ.totalt5")
+tcbrasilt5b = tcbrat5b[keeps]
+
+#Variable mes numeral
+tcbrasilt5b$id[tcbrasilt5b$m=="Jan"] <- c(1)
+tcbrasilt5b$id[tcbrasilt5b$m=="Fev"] <- c(2)
+tcbrasilt5b$id[tcbrasilt5b$m=="Mar"] <- c(3)
+tcbrasilt5b$id[tcbrasilt5b$m=="Abr"] <- c(4)
+tcbrasilt5b$id[tcbrasilt5b$m=="Mai"] <- c(5)
+tcbrasilt5b$id[tcbrasilt5b$m=="Jun"] <- c(6)
+tcbrasilt5b$id[tcbrasilt5b$m=="Jul"] <- c(7)
+tcbrasilt5b$id[tcbrasilt5b$m=="Ago"] <- c(8)
+tcbrasilt5b$id[tcbrasilt5b$m=="Set"] <- c(9)
+tcbrasilt5b$id[tcbrasilt5b$m=="Out"] <- c(10)
+tcbrasilt5b$id[tcbrasilt5b$m=="Nov"] <- c(11)
+tcbrasilt5b$id[tcbrasilt5b$m=="Dez"] <- c(12)
+
+tcbrasilt5b$month[tcbrasilt5b$m=="Jan"] <- c("Jan")
+tcbrasilt5b$month[tcbrasilt5b$m=="Fev"] <- c("Feb")
+tcbrasilt5b$month[tcbrasilt5b$m=="Mar"] <- c("Mar")
+tcbrasilt5b$month[tcbrasilt5b$m=="Abr"] <- c("Apr")
+tcbrasilt5b$month[tcbrasilt5b$m=="Mai"] <- c("May")
+tcbrasilt5b$month[tcbrasilt5b$m=="Jun"] <- c("Jun")
+tcbrasilt5b$month[tcbrasilt5b$m=="Jul"] <- c("Jul")
+tcbrasilt5b$month[tcbrasilt5b$m=="Ago"] <- c("Aug")
+tcbrasilt5b$month[tcbrasilt5b$m=="Set"] <- c("Sep")
+tcbrasilt5b$month[tcbrasilt5b$m=="Out"] <- c("Oct")
+tcbrasilt5b$month[tcbrasilt5b$m=="Nov"] <- c("Nov")
+tcbrasilt5b$month[tcbrasilt5b$m=="Dez"] <- c("Dec")
+
+#Variable año
+tcbrasilt5b$id.t <- with(tcbrasilt5b, ave(rep(1, nrow(tcbrasilt5b)), id, FUN = seq_along))
+
+#Cambiando los valores del id
+tcbrasilt5b$year <- NA
+tcbrasilt5b$year[tcbrasilt5b$id.t==1] <- c(2019)
+tcbrasilt5b$year[tcbrasilt5b$id.t==2] <- c(2020)
+tcbrasilt5b$year[tcbrasilt5b$id.t==3] <- c(2021)
+tcbrasilt5b$year[tcbrasilt5b$id.t==4] <- c(2022)
+tcbrasilt5b$year[tcbrasilt5b$id.t==5] <- c(2023)
+tcbrasilt5b$year[tcbrasilt5b$id.t==6] <- c(2024)
+tcbrasilt5b$year[tcbrasilt5b$id.t==7] <- c(2025)
+tcbrasilt5b$year[tcbrasilt5b$id.t==8] <- c(2026)
+tcbrasilt5b$year[tcbrasilt5b$id.t==9] <- c(2027)
+tcbrasilt5b$year[tcbrasilt5b$id.t==10] <- c(2028)
+tcbrasilt5b$year[tcbrasilt5b$id.t==11] <- c(2029)
+tcbrasilt5b$year[tcbrasilt5b$id.t==12] <- c(2030)
+
+#tcbrasilt5$w <- as.factor(tcbrasilt5b$id)
+
+#La variable "date"
+tcbrasilt5b$date <- format(lubridate::ymd(paste0(tcbrasilt5b$year,tcbrasilt5b$month,"01")), "%m-%Y")
+
+#Nos quedamos con las variables que nos importan
+colnames(tcbrasilt5b)
+keeps2 <- c("PJ.tarjcredito.portpar",
+            "PJ.tarjcredito.alavista", "PJ.tarjcredito.total",  
+            "PJ.acc",                  "PJ.finan.import",
+            "PJ.finan.export",         "PJ.trans.exterior" ,     
+            "PJ.otrost5",                "PJ.totalt5")
+tcbrasilt5b = tcbrasilt5b[keeps2]
+
+# Tabel 6 ---------------------------------------
+#rm(list = ls())
+library(readxl)
+tcbrat6 <- read_excel("Brasil9.xlsx",sheet="Tabela 6", range = "A14:O30")
+
+# analyzing
+colnames(tcbrat6)
+# Rename column names
+names(tcbrat6)[names(tcbrat6) == "...1"] <- "year"
+names(tcbrat6)[names(tcbrat6) == "...2"] <- "m"
+names(tcbrat6)[names(tcbrat6) == "...3"] <- "n"
+names(tcbrat6)[names(tcbrat6) == "...4"] <- "cheque.esp"
+names(tcbrat6)[names(tcbrat6) == "...5"] <- "cred.personal.nconsig"
+names(tcbrat6)[names(tcbrat6) == "...6"] <- "cred.personal.consig.servpub"
+names(tcbrat6)[names(tcbrat6) == "...7"] <- "cred.personal.consig.sp"
+names(tcbrat6)[names(tcbrat6) == "...8"] <- "cred.personal.consig.binss"
+names(tcbrat6)[names(tcbrat6) == "...9"] <- "cred.personal.consig.total"
+names(tcbrat6)[names(tcbrat6) == "...10"] <- "cred.personal.total"
+names(tcbrat6)[names(tcbrat6) == "...11"] <- "n"
+tcbrat6
+
+#Eliminando empty values
+#tcbrat6 <- tcbrat6[!is.na(tcbrat6$vendedor), ]
+tcbrat6 <- tcbrat6[!is.na(tcbrat6$m), ]
+
+#Con las variables que interesan
+colnames(tcbrat6)
+
+keeps <- c("m","cheque.esp",
+           "cred.personal.nconsig",
+           "cred.personal.consig.servpub",
+           "cred.personal.consig.sp",
+           "cred.personal.consig.binss",
+           "cred.personal.consig.total", 
+           "cred.personal.total")
+tcbrasilt6 = tcbrat6[keeps]
+
+#Variable mes numeral
+tcbrasilt6$id[tcbrasilt6$m=="Jan"] <- c(1)
+tcbrasilt6$id[tcbrasilt6$m=="Fev"] <- c(2)
+tcbrasilt6$id[tcbrasilt6$m=="Mar"] <- c(3)
+tcbrasilt6$id[tcbrasilt6$m=="Abr"] <- c(4)
+tcbrasilt6$id[tcbrasilt6$m=="Mai"] <- c(5)
+tcbrasilt6$id[tcbrasilt6$m=="Jun"] <- c(6)
+tcbrasilt6$id[tcbrasilt6$m=="Jul"] <- c(7)
+tcbrasilt6$id[tcbrasilt6$m=="Ago"] <- c(8)
+tcbrasilt6$id[tcbrasilt6$m=="Set"] <- c(9)
+tcbrasilt6$id[tcbrasilt6$m=="Out"] <- c(10)
+tcbrasilt6$id[tcbrasilt6$m=="Nov"] <- c(11)
+tcbrasilt6$id[tcbrasilt6$m=="Dez"] <- c(12)
+
+tcbrasilt6$month[tcbrasilt6$m=="Jan"] <- c("Jan")
+tcbrasilt6$month[tcbrasilt6$m=="Fev"] <- c("Feb")
+tcbrasilt6$month[tcbrasilt6$m=="Mar"] <- c("Mar")
+tcbrasilt6$month[tcbrasilt6$m=="Abr"] <- c("Apr")
+tcbrasilt6$month[tcbrasilt6$m=="Mai"] <- c("May")
+tcbrasilt6$month[tcbrasilt6$m=="Jun"] <- c("Jun")
+tcbrasilt6$month[tcbrasilt6$m=="Jul"] <- c("Jul")
+tcbrasilt6$month[tcbrasilt6$m=="Ago"] <- c("Aug")
+tcbrasilt6$month[tcbrasilt6$m=="Set"] <- c("Sep")
+tcbrasilt6$month[tcbrasilt6$m=="Out"] <- c("Oct")
+tcbrasilt6$month[tcbrasilt6$m=="Nov"] <- c("Nov")
+tcbrasilt6$month[tcbrasilt6$m=="Dez"] <- c("Dec")
+
+#Variable año
+tcbrasilt6$id.t <- with(tcbrasilt6, ave(rep(1, nrow(tcbrasilt6)), id, FUN = seq_along))
+
+#Cambiando los valores del id
+tcbrasilt6$year <- NA
+tcbrasilt6$year[tcbrasilt6$id.t==1] <- c(2019)
+tcbrasilt6$year[tcbrasilt6$id.t==2] <- c(2020)
+tcbrasilt6$year[tcbrasilt6$id.t==3] <- c(2021)
+tcbrasilt6$year[tcbrasilt6$id.t==4] <- c(2022)
+tcbrasilt6$year[tcbrasilt6$id.t==5] <- c(2023)
+tcbrasilt6$year[tcbrasilt6$id.t==6] <- c(2024)
+tcbrasilt6$year[tcbrasilt6$id.t==7] <- c(2025)
+tcbrasilt6$year[tcbrasilt6$id.t==8] <- c(2026)
+tcbrasilt6$year[tcbrasilt6$id.t==9] <- c(2027)
+tcbrasilt6$year[tcbrasilt6$id.t==10] <- c(2028)
+tcbrasilt6$year[tcbrasilt6$id.t==11] <- c(2029)
+tcbrasilt6$year[tcbrasilt6$id.t==12] <- c(2030)
+
+#tcbrasilt5$w <- as.factor(tcbrasilt6$id)
+
+#La variable "date"
+tcbrasilt6$date <- format(lubridate::ymd(paste0(tcbrasilt6$year,tcbrasilt6$month,"01")), "%m-%Y")
+
+#Nos quedamos con las variables que nos importan
+colnames(tcbrasilt6)
+keeps2 <- c("cheque.esp",
+            "cred.personal.nconsig",
+            "cred.personal.consig.servpub",
+            "cred.personal.consig.sp",
+            "cred.personal.consig.binss",  
+            "cred.personal.consig.total",
+            "cred.personal.total")
+tcbrasilt6 = tcbrasilt6[keeps2]
+
+# Tabel 6A ---------------------------------------
+#rm(list = ls())
+library(readxl)
+tcbrat6a <- read_excel("Brasil9.xlsx",sheet="Tabela 6A", range = "A14:O30")
+
+# analyzing
+colnames(tcbrat6a)
+# Rename column names
+names(tcbrat6a)[names(tcbrat6a) == "...1"] <- "year"
+names(tcbrat6a)[names(tcbrat6a) == "...2"] <- "m"
+names(tcbrat6a)[names(tcbrat6a) == "...3"] <- "n"
+names(tcbrat6a)[names(tcbrat6a) == "...4"] <- "adq.vehiculos"
+names(tcbrat6a)[names(tcbrat6a) == "...5"] <- "adq.obienes"
+names(tcbrat6a)[names(tcbrat6a) == "...6"] <- "tcredito.gira.regular"
+names(tcbrat6a)[names(tcbrat6a) == "...7"] <- "tcredito.gira.irregular"
+names(tcbrat6a)[names(tcbrat6a) == "...8"] <- "tcredito.gira.total"
+names(tcbrat6a)[names(tcbrat6a) == "...9"] <- "tcredito.entrega"
+names(tcbrat6a)[names(tcbrat6a) == "...10"] <- "tcredito.alavista"
+names(tcbrat6a)[names(tcbrat6a) == "...11"] <- "tcredito.total"
+names(tcbrat6a)[names(tcbrat6a) == "...12"] <- "n"
+tcbrat6a
+
+#Eliminando empty values
+#tcbrat6a <- tcbrat6a[!is.na(tcbrat6a$vendedor), ]
+tcbrat6a <- tcbrat6a[!is.na(tcbrat6a$m), ]
+
+#Con las variables que interesan
+colnames(tcbrat6a)
+
+keeps <- c("m","adq.vehiculos",
+           "adq.obienes",
+           "tcredito.gira.regular",
+           "tcredito.gira.irregular",
+           "tcredito.gira.total",
+           "tcredito.entrega",       
+           "tcredito.alavista",
+           "tcredito.total")
+tcbrasilt6a = tcbrat6a[keeps]
+
+#Variable mes numeral
+tcbrasilt6a$id[tcbrasilt6a$m=="Jan"] <- c(1)
+tcbrasilt6a$id[tcbrasilt6a$m=="Fev"] <- c(2)
+tcbrasilt6a$id[tcbrasilt6a$m=="Mar"] <- c(3)
+tcbrasilt6a$id[tcbrasilt6a$m=="Abr"] <- c(4)
+tcbrasilt6a$id[tcbrasilt6a$m=="Mai"] <- c(5)
+tcbrasilt6a$id[tcbrasilt6a$m=="Jun"] <- c(6)
+tcbrasilt6a$id[tcbrasilt6a$m=="Jul"] <- c(7)
+tcbrasilt6a$id[tcbrasilt6a$m=="Ago"] <- c(8)
+tcbrasilt6a$id[tcbrasilt6a$m=="Set"] <- c(9)
+tcbrasilt6a$id[tcbrasilt6a$m=="Out"] <- c(10)
+tcbrasilt6a$id[tcbrasilt6a$m=="Nov"] <- c(11)
+tcbrasilt6a$id[tcbrasilt6a$m=="Dez"] <- c(12)
+
+tcbrasilt6a$month[tcbrasilt6a$m=="Jan"] <- c("Jan")
+tcbrasilt6a$month[tcbrasilt6a$m=="Fev"] <- c("Feb")
+tcbrasilt6a$month[tcbrasilt6a$m=="Mar"] <- c("Mar")
+tcbrasilt6a$month[tcbrasilt6a$m=="Abr"] <- c("Apr")
+tcbrasilt6a$month[tcbrasilt6a$m=="Mai"] <- c("May")
+tcbrasilt6a$month[tcbrasilt6a$m=="Jun"] <- c("Jun")
+tcbrasilt6a$month[tcbrasilt6a$m=="Jul"] <- c("Jul")
+tcbrasilt6a$month[tcbrasilt6a$m=="Ago"] <- c("Aug")
+tcbrasilt6a$month[tcbrasilt6a$m=="Set"] <- c("Sep")
+tcbrasilt6a$month[tcbrasilt6a$m=="Out"] <- c("Oct")
+tcbrasilt6a$month[tcbrasilt6a$m=="Nov"] <- c("Nov")
+tcbrasilt6a$month[tcbrasilt6a$m=="Dez"] <- c("Dec")
+
+#Variable año
+tcbrasilt6a$id.t <- with(tcbrasilt6a, ave(rep(1, nrow(tcbrasilt6a)), id, FUN = seq_along))
+
+#Cambiando los valores del id
+tcbrasilt6a$year <- NA
+tcbrasilt6a$year[tcbrasilt6a$id.t==1] <- c(2019)
+tcbrasilt6a$year[tcbrasilt6a$id.t==2] <- c(2020)
+tcbrasilt6a$year[tcbrasilt6a$id.t==3] <- c(2021)
+tcbrasilt6a$year[tcbrasilt6a$id.t==4] <- c(2022)
+tcbrasilt6a$year[tcbrasilt6a$id.t==5] <- c(2023)
+tcbrasilt6a$year[tcbrasilt6a$id.t==6] <- c(2024)
+tcbrasilt6a$year[tcbrasilt6a$id.t==7] <- c(2025)
+tcbrasilt6a$year[tcbrasilt6a$id.t==8] <- c(2026)
+tcbrasilt6a$year[tcbrasilt6a$id.t==9] <- c(2027)
+tcbrasilt6a$year[tcbrasilt6a$id.t==10] <- c(2028)
+tcbrasilt6a$year[tcbrasilt6a$id.t==11] <- c(2029)
+tcbrasilt6a$year[tcbrasilt6a$id.t==12] <- c(2030)
+
+#tcbrasilt5$w <- as.factor(tcbrasilt6a$id)
+
+#La variable "date"
+tcbrasilt6a$date <- format(lubridate::ymd(paste0(tcbrasilt6a$year,tcbrasilt6a$month,"01")), "%m-%Y")
+
+#Nos quedamos con las variables que nos importan
+colnames(tcbrasilt6a)
+keeps2 <- c("adq.vehiculos",
+            "adq.obienes",
+            "tcredito.gira.regular",
+            "tcredito.gira.irregular",
+            "tcredito.gira.total",
+            "tcredito.entrega",
+            "tcredito.alavista",      "tcredito.total")
+tcbrasilt6a = tcbrasilt6a[keeps2]
+
+# Tabel 6B ---------------------------------------
+#rm(list = ls())
+library(readxl)
+tcbrat6b <- read_excel("Brasil9.xlsx",sheet="Tabela 6B", range = "A12:O30")
+
+# analyzing
+colnames(tcbrat6b)
+# Rename column names
+names(tcbrat6b)[names(tcbrat6b) == "...1"] <- "year"
+names(tcbrat6b)[names(tcbrat6b) == "...2"] <- "m"
+names(tcbrat6b)[names(tcbrat6b) == "...3"] <- "n"
+names(tcbrat6b)[names(tcbrat6b) == "...4"] <- "arrend.vehiculos"
+names(tcbrat6b)[names(tcbrat6b) == "...5"] <- "arrend.obienes"
+names(tcbrat6b)[names(tcbrat6b) == "...6"] <- "arrend.total"
+names(tcbrat6b)[names(tcbrat6b) == "...7"] <- "desc.cheques"
+names(tcbrat6b)[names(tcbrat6b) == "...8"] <- "comp.deudas"
+names(tcbrat6b)[names(tcbrat6b) == "...9"] <- "otrost6"
+names(tcbrat6b)[names(tcbrat6b) == "...10"] <- "total.ngiratorio"
+names(tcbrat6b)[names(tcbrat6b) == "...11"] <- "totalt6"
+names(tcbrat6b)[names(tcbrat6b) == "...12"] <- "n"
+tcbrat6b
+
+#Eliminando empty values
+#tcbrat6b <- tcbrat6b[!is.na(tcbrat6b$vendedor), ]
+tcbrat6b <- tcbrat6b[!is.na(tcbrat6b$m), ]
+
+#Con las variables que interesan
+colnames(tcbrat6b)
+
+keeps <- c("m","arrend.vehiculos",
+           "arrend.obienes",  
+           "arrend.total",
+           "desc.cheques",
+           "comp.deudas",
+           "otrost6",
+           "total.ngiratorio",
+           "totalt6")
+tcbrasilt6b = tcbrat6b[keeps]
+
+#Variable mes numeral
+tcbrasilt6b$id[tcbrasilt6b$m=="Jan"] <- c(1)
+tcbrasilt6b$id[tcbrasilt6b$m=="Fev"] <- c(2)
+tcbrasilt6b$id[tcbrasilt6b$m=="Mar"] <- c(3)
+tcbrasilt6b$id[tcbrasilt6b$m=="Abr"] <- c(4)
+tcbrasilt6b$id[tcbrasilt6b$m=="Mai"] <- c(5)
+tcbrasilt6b$id[tcbrasilt6b$m=="Jun"] <- c(6)
+tcbrasilt6b$id[tcbrasilt6b$m=="Jul"] <- c(7)
+tcbrasilt6b$id[tcbrasilt6b$m=="Ago"] <- c(8)
+tcbrasilt6b$id[tcbrasilt6b$m=="Set"] <- c(9)
+tcbrasilt6b$id[tcbrasilt6b$m=="Out"] <- c(10)
+tcbrasilt6b$id[tcbrasilt6b$m=="Nov"] <- c(11)
+tcbrasilt6b$id[tcbrasilt6b$m=="Dez"] <- c(12)
+
+tcbrasilt6b$month[tcbrasilt6b$m=="Jan"] <- c("Jan")
+tcbrasilt6b$month[tcbrasilt6b$m=="Fev"] <- c("Feb")
+tcbrasilt6b$month[tcbrasilt6b$m=="Mar"] <- c("Mar")
+tcbrasilt6b$month[tcbrasilt6b$m=="Abr"] <- c("Apr")
+tcbrasilt6b$month[tcbrasilt6b$m=="Mai"] <- c("May")
+tcbrasilt6b$month[tcbrasilt6b$m=="Jun"] <- c("Jun")
+tcbrasilt6b$month[tcbrasilt6b$m=="Jul"] <- c("Jul")
+tcbrasilt6b$month[tcbrasilt6b$m=="Ago"] <- c("Aug")
+tcbrasilt6b$month[tcbrasilt6b$m=="Set"] <- c("Sep")
+tcbrasilt6b$month[tcbrasilt6b$m=="Out"] <- c("Oct")
+tcbrasilt6b$month[tcbrasilt6b$m=="Nov"] <- c("Nov")
+tcbrasilt6b$month[tcbrasilt6b$m=="Dez"] <- c("Dec")
+
+#Variable año
+tcbrasilt6b$id.t <- with(tcbrasilt6b, ave(rep(1, nrow(tcbrasilt6b)), id, FUN = seq_along))
+
+#Cambiando los valores del id
+tcbrasilt6b$year <- NA
+tcbrasilt6b$year[tcbrasilt6b$id.t==1] <- c(2019)
+tcbrasilt6b$year[tcbrasilt6b$id.t==2] <- c(2020)
+tcbrasilt6b$year[tcbrasilt6b$id.t==3] <- c(2021)
+tcbrasilt6b$year[tcbrasilt6b$id.t==4] <- c(2022)
+tcbrasilt6b$year[tcbrasilt6b$id.t==5] <- c(2023)
+tcbrasilt6b$year[tcbrasilt6b$id.t==6] <- c(2024)
+tcbrasilt6b$year[tcbrasilt6b$id.t==7] <- c(2025)
+tcbrasilt6b$year[tcbrasilt6b$id.t==8] <- c(2026)
+tcbrasilt6b$year[tcbrasilt6b$id.t==9] <- c(2027)
+tcbrasilt6b$year[tcbrasilt6b$id.t==10] <- c(2028)
+tcbrasilt6b$year[tcbrasilt6b$id.t==11] <- c(2029)
+tcbrasilt6b$year[tcbrasilt6b$id.t==12] <- c(2030)
+
+#tcbrasilt5$w <- as.factor(tcbrasilt6b$id)
+
+#La variable "date"
+tcbrasilt6b$date <- format(lubridate::ymd(paste0(tcbrasilt6b$year,tcbrasilt6b$month,"01")), "%m-%Y")
+
+#Nos quedamos con las variables que nos importan
+colnames(tcbrasilt6b)
+keeps2 <- c("arrend.vehiculos",
+            "arrend.obienes",  
+            "arrend.total",
+            "desc.cheques",
+            "comp.deudas",
+            "otrost6",
+            "total.ngiratorio",
+            "totalt6")
+tcbrasilt6b = tcbrasilt6b[keeps2]
+
+# Tabel 7 ---------------------------------------
+#rm(list = ls())
+library(readxl)
+tcbrat7 <- read_excel("Brasil9.xlsx",sheet="Tabela 7", range = "A12:O30")
+
+# analyzing
+colnames(tcbrat7)
+# Rename column names
+names(tcbrat7)[names(tcbrat7) == "...1"] <- "year"
+names(tcbrat7)[names(tcbrat7) == "...2"] <- "m"
+names(tcbrat7)[names(tcbrat7) == "...3"] <- "n"
+names(tcbrat7)[names(tcbrat7) == "...4"] <- "PJ.crural.imp.merc"
+names(tcbrat7)[names(tcbrat7) == "...5"] <- "PJ.crural.tarifa.reg"
+names(tcbrat7)[names(tcbrat7) == "...6"] <- "PJ.crural.total"
+names(tcbrat7)[names(tcbrat7) == "...7"] <- "PJ.financ.inmob.imp.merc"
+names(tcbrat7)[names(tcbrat7) == "...8"] <- "PJ.financ.inmob.tarifa.reg"
+names(tcbrat7)[names(tcbrat7) == "...9"] <- "PJ.financ.inmob.total"
+names(tcbrat7)[names(tcbrat7) == "...10"] <- "PJ.cred.rec.bndes.kgirat"
+names(tcbrat7)[names(tcbrat7) == "...11"] <- "PJ.cred.rec.bndes.finver"
+names(tcbrat7)[names(tcbrat7) == "...12"] <- "PJ.cred.rec.bndes.fagro"
+names(tcbrat7)[names(tcbrat7) == "...13"] <- "PJ.cred.rec.bndes.total"
+names(tcbrat7)[names(tcbrat7) == "...14"] <- "PJ.otros"
+names(tcbrat7)[names(tcbrat7) == "...15"] <- "PJ.total"
+tcbrat7
+
+#Eliminando empty values
+#tcbrat7 <- tcbrat7[!is.na(tcbrat7$vendedor), ]
+tcbrat7 <- tcbrat7[!is.na(tcbrat7$m), ]
+
+#Con las variables que interesan
+colnames(tcbrat7)
+
+keeps <- c("m","PJ.crural.imp.merc",
+           "PJ.crural.tarifa.reg",
+           "PJ.crural.total",           
+           "PJ.financ.inmob.imp.merc",
+           "PJ.financ.inmob.tarifa.reg",
+           "PJ.financ.inmob.total",     
+           "PJ.cred.rec.bndes.kgirat",
+           "PJ.cred.rec.bndes.finver",  
+           "PJ.cred.rec.bndes.fagro",
+           "PJ.cred.rec.bndes.total",
+           "PJ.otros",
+           "PJ.total")
+tcbrasilt7 = tcbrat7[keeps]
+
+#Variable mes numeral
+tcbrasilt7$id[tcbrasilt7$m=="Jan"] <- c(1)
+tcbrasilt7$id[tcbrasilt7$m=="Fev"] <- c(2)
+tcbrasilt7$id[tcbrasilt7$m=="Mar"] <- c(3)
+tcbrasilt7$id[tcbrasilt7$m=="Abr"] <- c(4)
+tcbrasilt7$id[tcbrasilt7$m=="Mai"] <- c(5)
+tcbrasilt7$id[tcbrasilt7$m=="Jun"] <- c(6)
+tcbrasilt7$id[tcbrasilt7$m=="Jul"] <- c(7)
+tcbrasilt7$id[tcbrasilt7$m=="Ago"] <- c(8)
+tcbrasilt7$id[tcbrasilt7$m=="Set"] <- c(9)
+tcbrasilt7$id[tcbrasilt7$m=="Out"] <- c(10)
+tcbrasilt7$id[tcbrasilt7$m=="Nov"] <- c(11)
+tcbrasilt7$id[tcbrasilt7$m=="Dez"] <- c(12)
+
+tcbrasilt7$month[tcbrasilt7$m=="Jan"] <- c("Jan")
+tcbrasilt7$month[tcbrasilt7$m=="Fev"] <- c("Feb")
+tcbrasilt7$month[tcbrasilt7$m=="Mar"] <- c("Mar")
+tcbrasilt7$month[tcbrasilt7$m=="Abr"] <- c("Apr")
+tcbrasilt7$month[tcbrasilt7$m=="Mai"] <- c("May")
+tcbrasilt7$month[tcbrasilt7$m=="Jun"] <- c("Jun")
+tcbrasilt7$month[tcbrasilt7$m=="Jul"] <- c("Jul")
+tcbrasilt7$month[tcbrasilt7$m=="Ago"] <- c("Aug")
+tcbrasilt7$month[tcbrasilt7$m=="Set"] <- c("Sep")
+tcbrasilt7$month[tcbrasilt7$m=="Out"] <- c("Oct")
+tcbrasilt7$month[tcbrasilt7$m=="Nov"] <- c("Nov")
+tcbrasilt7$month[tcbrasilt7$m=="Dez"] <- c("Dec")
+
+#Variable año
+tcbrasilt7$id.t <- with(tcbrasilt7, ave(rep(1, nrow(tcbrasilt7)), id, FUN = seq_along))
+
+#Cambiando los valores del id
+tcbrasilt7$year <- NA
+tcbrasilt7$year[tcbrasilt7$id.t==1] <- c(2019)
+tcbrasilt7$year[tcbrasilt7$id.t==2] <- c(2020)
+tcbrasilt7$year[tcbrasilt7$id.t==3] <- c(2021)
+tcbrasilt7$year[tcbrasilt7$id.t==4] <- c(2022)
+tcbrasilt7$year[tcbrasilt7$id.t==5] <- c(2023)
+tcbrasilt7$year[tcbrasilt7$id.t==6] <- c(2024)
+tcbrasilt7$year[tcbrasilt7$id.t==7] <- c(2025)
+tcbrasilt7$year[tcbrasilt7$id.t==8] <- c(2026)
+tcbrasilt7$year[tcbrasilt7$id.t==9] <- c(2027)
+tcbrasilt7$year[tcbrasilt7$id.t==10] <- c(2028)
+tcbrasilt7$year[tcbrasilt7$id.t==11] <- c(2029)
+tcbrasilt7$year[tcbrasilt7$id.t==12] <- c(2030)
+
+#tcbrasilt5$w <- as.factor(tcbrasilt7$id)
+
+#La variable "date"
+tcbrasilt7$date <- format(lubridate::ymd(paste0(tcbrasilt7$year,tcbrasilt7$month,"01")), "%m-%Y")
+
+#Nos quedamos con las variables que nos importan
+colnames(tcbrasilt7)
+keeps2 <- c("PJ.crural.imp.merc",
+            "PJ.crural.tarifa.reg",
+            "PJ.crural.total",           
+            "PJ.financ.inmob.imp.merc",
+            "PJ.financ.inmob.tarifa.reg",
+            "PJ.financ.inmob.total",     
+            "PJ.cred.rec.bndes.kgirat",
+            "PJ.cred.rec.bndes.finver",
+            "PJ.cred.rec.bndes.fagro",
+            "PJ.cred.rec.bndes.total",
+            "PJ.otros",
+            "PJ.total")
+tcbrasilt7 = tcbrasilt7[keeps2]
+
+# Tabel 8 ---------------------------------------
+#rm(list = ls())
+library(readxl)
+tcbrat8 <- read_excel("Brasil9.xlsx",sheet="Tabela 8", range = "A12:O30")
+
+# analyzing
+colnames(tcbrat8)
+# Rename column names
+names(tcbrat8)[names(tcbrat8) == "...1"] <- "year"
+names(tcbrat8)[names(tcbrat8) == "...2"] <- "m"
+names(tcbrat8)[names(tcbrat8) == "...3"] <- "n"
+names(tcbrat8)[names(tcbrat8) == "...4"] <- "crural.imp.merc"
+names(tcbrat8)[names(tcbrat8) == "...5"] <- "crural.tarifa.reg"
+names(tcbrat8)[names(tcbrat8) == "...6"] <- "crural.total"
+names(tcbrat8)[names(tcbrat8) == "...7"] <- "financ.inmob.imp.merc"
+names(tcbrat8)[names(tcbrat8) == "...8"] <- "financ.inmob.tarifa.reg"
+names(tcbrat8)[names(tcbrat8) == "...9"] <- "financ.inmob.total"
+names(tcbrat8)[names(tcbrat8) == "...10"] <- "cred.rec.bndes.finver"
+names(tcbrat8)[names(tcbrat8) == "...11"] <- "cred.rec.bndes.fagro"
+names(tcbrat8)[names(tcbrat8) == "...12"] <- "cred.rec.bndes.total"
+names(tcbrat8)[names(tcbrat8) == "...13"] <- "microcredito"
+names(tcbrat8)[names(tcbrat8) == "...14"] <- "otros"
+names(tcbrat8)[names(tcbrat8) == "...15"] <- "total"
+tcbrat8
+
+#Eliminando empty values
+#tcbrat8 <- tcbrat8[!is.na(tcbrat8$vendedor), ]
+tcbrat8 <- tcbrat8[!is.na(tcbrat8$m), ]
+
+#Con las variables que interesan
+colnames(tcbrat8)
+
+keeps <- c("m","crural.imp.merc",
+           "crural.tarifa.reg",
+           "crural.total",           
+           "financ.inmob.imp.merc",
+           "financ.inmob.tarifa.reg",
+           "financ.inmob.total",     
+           "cred.rec.bndes.finver",
+           "cred.rec.bndes.fagro",
+           "cred.rec.bndes.total",
+           "microcredito",
+           "otros",
+           "total")
+
+tcbrasilt8 = tcbrat8[keeps]
+
+#Variable mes numeral
+tcbrasilt8$id[tcbrasilt8$m=="Jan"] <- c(1)
+tcbrasilt8$id[tcbrasilt8$m=="Fev"] <- c(2)
+tcbrasilt8$id[tcbrasilt8$m=="Mar"] <- c(3)
+tcbrasilt8$id[tcbrasilt8$m=="Abr"] <- c(4)
+tcbrasilt8$id[tcbrasilt8$m=="Mai"] <- c(5)
+tcbrasilt8$id[tcbrasilt8$m=="Jun"] <- c(6)
+tcbrasilt8$id[tcbrasilt8$m=="Jul"] <- c(7)
+tcbrasilt8$id[tcbrasilt8$m=="Ago"] <- c(8)
+tcbrasilt8$id[tcbrasilt8$m=="Set"] <- c(9)
+tcbrasilt8$id[tcbrasilt8$m=="Out"] <- c(10)
+tcbrasilt8$id[tcbrasilt8$m=="Nov"] <- c(11)
+tcbrasilt8$id[tcbrasilt8$m=="Dez"] <- c(12)
+
+tcbrasilt8$month[tcbrasilt8$m=="Jan"] <- c("Jan")
+tcbrasilt8$month[tcbrasilt8$m=="Fev"] <- c("Feb")
+tcbrasilt8$month[tcbrasilt8$m=="Mar"] <- c("Mar")
+tcbrasilt8$month[tcbrasilt8$m=="Abr"] <- c("Apr")
+tcbrasilt8$month[tcbrasilt8$m=="Mai"] <- c("May")
+tcbrasilt8$month[tcbrasilt8$m=="Jun"] <- c("Jun")
+tcbrasilt8$month[tcbrasilt8$m=="Jul"] <- c("Jul")
+tcbrasilt8$month[tcbrasilt8$m=="Ago"] <- c("Aug")
+tcbrasilt8$month[tcbrasilt8$m=="Set"] <- c("Sep")
+tcbrasilt8$month[tcbrasilt8$m=="Out"] <- c("Oct")
+tcbrasilt8$month[tcbrasilt8$m=="Nov"] <- c("Nov")
+tcbrasilt8$month[tcbrasilt8$m=="Dez"] <- c("Dec")
+
+#Variable año
+tcbrasilt8$id.t <- with(tcbrasilt8, ave(rep(1, nrow(tcbrasilt8)), id, FUN = seq_along))
+
+#Cambiando los valores del id
+tcbrasilt8$year <- NA
+tcbrasilt8$year[tcbrasilt8$id.t==1] <- c(2019)
+tcbrasilt8$year[tcbrasilt8$id.t==2] <- c(2020)
+tcbrasilt8$year[tcbrasilt8$id.t==3] <- c(2021)
+tcbrasilt8$year[tcbrasilt8$id.t==4] <- c(2022)
+tcbrasilt8$year[tcbrasilt8$id.t==5] <- c(2023)
+tcbrasilt8$year[tcbrasilt8$id.t==6] <- c(2024)
+tcbrasilt8$year[tcbrasilt8$id.t==7] <- c(2025)
+tcbrasilt8$year[tcbrasilt8$id.t==8] <- c(2026)
+tcbrasilt8$year[tcbrasilt8$id.t==9] <- c(2027)
+tcbrasilt8$year[tcbrasilt8$id.t==10] <- c(2028)
+tcbrasilt8$year[tcbrasilt8$id.t==11] <- c(2029)
+tcbrasilt8$year[tcbrasilt8$id.t==12] <- c(2030)
+
+#tcbrasilt5$w <- as.factor(tcbrasilt8$id)
+
+#La variable "date"
+tcbrasilt8$date <- format(lubridate::ymd(paste0(tcbrasilt8$year,tcbrasilt8$month,"01")), "%m-%Y")
+
+#Nos quedamos con las variables que nos importan
+colnames(tcbrasilt8)
+keeps2 <- c("crural.imp.merc",
+            "crural.tarifa.reg",
+            "crural.total",           
+            "financ.inmob.imp.merc",
+            "financ.inmob.tarifa.reg",
+            "financ.inmob.total",     
+            "cred.rec.bndes.finver",
+            "cred.rec.bndes.fagro",
+            "cred.rec.bndes.total",
+            "microcredito",
+            "otros",
+            "total")
+tcbrasilt8 = tcbrasilt8[keeps2]
+
+# EMPRESAS TIPO CREDITO------------------------
+# Tabel 27 ---------------------------------------
+#rm(list = ls())
+library(readxl)
+tcbrat27 <- read_excel("Brasil9.xlsx",sheet="Tabela 27", range = "A12:O30")
+
+# analyzing
+colnames(tcbrat27)
+# Rename column names
+names(tcbrat27)[names(tcbrat27) == "...1"] <- "year"
+names(tcbrat27)[names(tcbrat27) == "...2"] <- "m"
+names(tcbrat27)[names(tcbrat27) == "...3"] <- "n"
+names(tcbrat27)[names(tcbrat27) == "...4"] <- "EMP.equi.mpme"
+names(tcbrat27)[names(tcbrat27) == "...5"] <- "EMP.equi.grande"
+names(tcbrat27)[names(tcbrat27) == "...6"] <- "EMP.equi.total"
+names(tcbrat27)[names(tcbrat27) == "...7"] <- "EMP.defec.mpme"
+names(tcbrat27)[names(tcbrat27) == "...8"] <- "EMP.defec.grande"
+names(tcbrat27)[names(tcbrat27) == "...9"] <- "EMP.defec.total"
+names(tcbrat27)[names(tcbrat27) == "...10"] <- "EMP.maybal.riesgo.mpme"
+names(tcbrat27)[names(tcbrat27) == "...11"] <- "EMP.maybal.riesgo.grande"
+names(tcbrat27)[names(tcbrat27) == "...12"] <- "EMP.maybal.riesgo.total"
+tcbrat27
+
+#Eliminando empty values
+#tcbrat27 <- tcbrat27[!is.na(tcbrat27$vendedor), ]
+tcbrat27 <- tcbrat27[!is.na(tcbrat27$m), ]
+
+#Con las variables que interesan
+colnames(tcbrat27)
+
+keeps <- c("m","EMP.equi.mpme",
+           "EMP.equi.grande",
+           "EMP.equi.total",
+           "EMP.defec.mpme",
+           "EMP.defec.grande",        
+           "EMP.defec.total",
+           "EMP.maybal.riesgo.mpme",
+           "EMP.maybal.riesgo.grande",
+           "EMP.maybal.riesgo.total")
+
+tcbrasilt27 = tcbrat27[keeps]
+
+#Variable mes numeral
+tcbrasilt27$id[tcbrasilt27$m=="Jan"] <- c(1)
+tcbrasilt27$id[tcbrasilt27$m=="Fev"] <- c(2)
+tcbrasilt27$id[tcbrasilt27$m=="Mar"] <- c(3)
+tcbrasilt27$id[tcbrasilt27$m=="Abr"] <- c(4)
+tcbrasilt27$id[tcbrasilt27$m=="Mai"] <- c(5)
+tcbrasilt27$id[tcbrasilt27$m=="Jun"] <- c(6)
+tcbrasilt27$id[tcbrasilt27$m=="Jul"] <- c(7)
+tcbrasilt27$id[tcbrasilt27$m=="Ago"] <- c(8)
+tcbrasilt27$id[tcbrasilt27$m=="Set"] <- c(9)
+tcbrasilt27$id[tcbrasilt27$m=="Out"] <- c(10)
+tcbrasilt27$id[tcbrasilt27$m=="Nov"] <- c(11)
+tcbrasilt27$id[tcbrasilt27$m=="Dez"] <- c(12)
+
+tcbrasilt27$month[tcbrasilt27$m=="Jan"] <- c("Jan")
+tcbrasilt27$month[tcbrasilt27$m=="Fev"] <- c("Feb")
+tcbrasilt27$month[tcbrasilt27$m=="Mar"] <- c("Mar")
+tcbrasilt27$month[tcbrasilt27$m=="Abr"] <- c("Apr")
+tcbrasilt27$month[tcbrasilt27$m=="Mai"] <- c("May")
+tcbrasilt27$month[tcbrasilt27$m=="Jun"] <- c("Jun")
+tcbrasilt27$month[tcbrasilt27$m=="Jul"] <- c("Jul")
+tcbrasilt27$month[tcbrasilt27$m=="Ago"] <- c("Aug")
+tcbrasilt27$month[tcbrasilt27$m=="Set"] <- c("Sep")
+tcbrasilt27$month[tcbrasilt27$m=="Out"] <- c("Oct")
+tcbrasilt27$month[tcbrasilt27$m=="Nov"] <- c("Nov")
+tcbrasilt27$month[tcbrasilt27$m=="Dez"] <- c("Dec")
+
+#Variable año
+tcbrasilt27$id.t <- with(tcbrasilt27, ave(rep(1, nrow(tcbrasilt27)), id, FUN = seq_along))
+
+#Cambiando los valores del id
+tcbrasilt27$year <- NA
+tcbrasilt27$year[tcbrasilt27$id.t==1] <- c(2019)
+tcbrasilt27$year[tcbrasilt27$id.t==2] <- c(2020)
+tcbrasilt27$year[tcbrasilt27$id.t==3] <- c(2021)
+tcbrasilt27$year[tcbrasilt27$id.t==4] <- c(2022)
+tcbrasilt27$year[tcbrasilt27$id.t==5] <- c(2023)
+tcbrasilt27$year[tcbrasilt27$id.t==6] <- c(2024)
+tcbrasilt27$year[tcbrasilt27$id.t==7] <- c(2025)
+tcbrasilt27$year[tcbrasilt27$id.t==8] <- c(2026)
+tcbrasilt27$year[tcbrasilt27$id.t==9] <- c(2027)
+tcbrasilt27$year[tcbrasilt27$id.t==10] <- c(2028)
+tcbrasilt27$year[tcbrasilt27$id.t==11] <- c(2029)
+tcbrasilt27$year[tcbrasilt27$id.t==12] <- c(2030)
+
+#tcbrasilt5$w <- as.factor(tcbrasilt27$id)
+
+#La variable "date"
+tcbrasilt27$date <- format(lubridate::ymd(paste0(tcbrasilt27$year,tcbrasilt27$month,"01")), "%m-%Y")
+
+#Nos quedamos con las variables que nos importan
+colnames(tcbrasilt27)
+keeps2 <- c("EMP.equi.mpme",
+            "EMP.equi.grande",
+            "EMP.equi.total",
+            "EMP.defec.mpme",
+            "EMP.defec.grande",        
+            "EMP.defec.total",
+            "EMP.maybal.riesgo.mpme",
+            "EMP.maybal.riesgo.grande",
+            "EMP.maybal.riesgo.total")
+
+tcbrasilt27 = tcbrasilt27[keeps2]
+
+
+# cbinPad function ------------------------------
+cbindPad <- function(...){
+  args <- list(...)
+  n <- sapply(args,nrow)
+  mx <- max(n)
+  pad <- function(x, mx){
+    if (nrow(x) < mx){
+      nms <- colnames(x)
+      padTemp <- matrix(NA, mx - nrow(x), ncol(x))
+      colnames(padTemp) <- nms
+      if (ncol(x)==0) {
+        return(padTemp)
+      } else {
+        return(rbind(x,padTemp))
+      }
+    }
+    else{
+      return(x)
+    }
+  }
+  rs <- lapply(args,pad,mx)
+  return(do.call(cbind,rs))
 }
+
+# Adding data horizontally ------------------------------
+tcbrasilm1 <- cbindPad(tcbrasilt5,
+                     tcbrasilt5a,
+                     tcbrasilt5b)
+
+tcbrasilm2 <- cbindPad(tcbrasilm1,
+                       tcbrasilt6,
+                       tcbrasilt6a,
+                       tcbrasilt6b)
+
+tcbrasil <- cbindPad(tcbrasilm2,
+                       tcbrasilt7,
+                     tcbrasilt8,
+                     tcbrasilt27)
+
+# Agregando variables -----------------------------------
+colnames(tcbrasil)
+tcbrasil$ktrabajo <- tcbrasil$PJ.capital.trabajoT
+tcbrasil$arrendamiento <- tcbrasil$PJ.arrend.total+tcbrasil$arrend.total
+tcbrasil$tarjeta.credito <- tcbrasil$PJ.tarjcredito.total+tcbrasil$tcredito.total
+tcbrasil$credito.personal <- tcbrasil$cred.personal.total
+tcbrasil$inmobiliario <- tcbrasil$PJ.financ.inmob.total+tcbrasil$financ.inmob.total
+tcbrasil$cmicrocredito <- tcbrasil$microcredito
+tcbrasil$cmpem <- tcbrasil$EMP.equi.mpme
+tcbrasil$cgrande <- tcbrasil$EMP.equi.grande
+
+keeps3 <- c("date",
+            "ktrabajo",
+            "arrendamiento",
+            "tarjeta.credito",           
+            "credito.personal",
+            "inmobiliario",
+            "cmicrocredito",     
+            "cmpem",
+            "cgrande")
+
+tcbrasilm <- tcbrasil[keeps3]
+
+keeps4 <- c("date",
+            "tarjeta.credito",           
+            "credito.personal",
+            "inmobiliario")
+tcbrasilmo = tcbrasil[keeps4]
+
+#Nombre de las filas
+row.names(tcbrasilmo) <- tcbrasilmo$date
+
+
+
+# Exportando --------------------------------------------
+write.csv(tcbrasilm,"C:\\Users\\Asus\\Documents\\IDBinvest\\FinancialSystem_Brasil\\tcbrasilm.csv", row.names = FALSE)
+# graphs ------------------------------
+
+library(ggplot2)
+library(dplyr)
+library(hrbrthemes)
+colnames(tcbrasil)
+#
+brainmobiliario <- tcbrasilmo%>%
+  tail(10000) %>%
+  ggplot( aes(x=date, y=inmobiliario)) +
+  geom_line() +
+  geom_point()
+brainmobiliario
+
+brainmobiliario <- brainmobiliario + ggtitle("BRASIL crédito inmobiliario") +
+  xlab("Date") + ylab("MM reales")
+#
+bracredpersonal <- tcbrasilmo%>%
+  tail(10000) %>%
+  ggplot( aes(x=date, y=credito.personal)) +
+  geom_line() +
+  geom_point()
+bracredpersonal
+
+bracredpersonal <- bracredpersonal + ggtitle("BRASIL crédito personal") +
+  xlab("Date") + ylab("MM reales")
+#
+bratarjetacredito <- tcbrasilmo%>%
+  tail(10000) %>%
+  ggplot( aes(x=date, y=tarjeta.credito)) +
+  geom_line() +
+  geom_point()
+bratarjetacredito
+
+bratarjetacredito <- bratarjetacredito + ggtitle("BRASIL tarjeta de crédito") +
+  xlab("Date") + ylab("MM reales")
+#
+
+
+save(tcbrasil,file="tcbrasil.Rda")
+
 
 # CHILE ---------------------------------------------
 rm(list = ls())
