@@ -57,7 +57,7 @@ exists_dir <-
   str_detect('data_colombia') %>% 
   sum %>% {.>0}
 if(!exists_dir){system('mkdir data_colombia')}
-map(xlsx_urls[1],
+map(xlsx_urls[3:5],
     download_xlsx,
     head_url = "https://www.superfinanciera.gov.co",
     data_path = glue("{here::here()}/data_colombia"))
@@ -66,9 +66,15 @@ map(xlsx_urls[1],
 
 # 4. reading .xlsx file ----
 xlsx_files <- 
-  list.files("data_colombia", full.names = T)
+  list.files("data_colombia", full.names = F)
 
-file_path <- xlsx_files[1]
+
+library(lubridate)
+
+files <- paste0(str_sub(xlsx_files, 5, 8), 
+               str_sub(xlsx_files, 3, 4))
+
+file_path <- list.files("data_colombia", full.names = T)[which.max(files)]
 list_download <- 
   map(readxl::excel_sheets(path = glue("{here::here()}/{file_path}")), 
       function(sh){
